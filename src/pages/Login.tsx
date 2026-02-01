@@ -49,6 +49,7 @@ export default function Login() {
 
         {error && <p>{error}</p>}
         <button className="primary-btn">Login</button>
+        <p style={{textAlign: "center"}}>or <a style={{textDecoration: "underlined", color:"blue"}} href="/register">Click here to Register</a></p>
       </form>
     </div>
   );
