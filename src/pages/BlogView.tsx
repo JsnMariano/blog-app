@@ -7,28 +7,20 @@ interface Blog {
   title: string;
   content: string;
   image_url: string | null;
-  user_id: string;
 }
 
 export default function BlogView() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [blog, setBlog] = useState<Blog | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchData() {
-      const [{ data: blogData }, { data: userData }] = await Promise.all([
-        supabase.from("blogs").select("*").eq("id", id).single(),
-        supabase.auth.getUser(),
-      ]);
-
-      if (blogData) setBlog(blogData);
-      if (userData?.user) setCurrentUserId(userData.user.id);
-    }
-
-    fetchData();
+    supabase
+      .from("blogs")
+      .select("*")
+      .eq("id", id)
+      .single()
+      .then(({ data }) => setBlog(data));
   }, [id]);
 
   async function handleDelete(e: SyntheticEvent) {
@@ -36,19 +28,11 @@ export default function BlogView() {
 
     if (!window.confirm("Delete this blog?")) return;
 
-    const { error } = await supabase
-      .from("blogs")
-      .delete()
-      .eq("id", id);
-
-    if (!error) {
-      navigate("/blogs");
-    }
+    await supabase.from("blogs").delete().eq("id", id);
+    navigate("/blogs");
   }
 
   if (!blog) return <p>Loading...</p>;
-
-  const isOwner = blog.user_id === currentUserId;
 
   return (
     <div>
@@ -64,14 +48,9 @@ export default function BlogView() {
 
       <p>{blog.content}</p>
 
-      {/* OWNER-ONLY ACTIONS */}
-      {isOwner && (
-        <>
-          <Link to={`/blogs/edit/${blog.id}`}>Edit</Link>
-          {" | "}
-          <button onClick={handleDelete}>Delete</button>
-        </>
-      )}
+      <Link to={`/blogs/edit/${blog.id}`}>Edit</Link>
+      {" | "}
+      <button onClick={handleDelete}>Delete</button>
     </div>
   );
 }
