@@ -2,7 +2,7 @@ import { useState, type SyntheticEvent} from "react";
 import { supabase } from "../libs/supabase";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/auth/authSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -49,7 +49,7 @@ export default function Login() {
 
         {error && <p>{error}</p>}
         <button className="primary-btn">Login</button>
-        <p style={{textAlign: "center"}}>or <a style={{textDecoration: "underlined", color:"blue"}} href="/register">Click here to Register</a></p>
+        <p style={{textAlign: "center"}}>or <Link to="/register" style={{color:"blue"}}>Click here to Register</Link></p>
       </form>
     </div>
   );

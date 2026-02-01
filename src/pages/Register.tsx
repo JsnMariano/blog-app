@@ -1,6 +1,6 @@
 import { useState, type SyntheticEvent } from "react";
 import { supabase } from "../libs/supabase";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -26,7 +26,7 @@ export default function Register() {
       <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.currentTarget.value)} required />
       {message && <p>{message}</p>}
       <button className="primary-btn" type="submit">Register</button>
-      <p style={{textAlign: "center"}}>or <a style={{textDecoration: "underlined", color:"blue"}} href="/login">Click here to login</a></p>
+      <p style={{textAlign: "center"}}>or <Link to="/login" style={{color:"blue"}}>Click here to Login</Link></p>
     </form>
   );
 }
