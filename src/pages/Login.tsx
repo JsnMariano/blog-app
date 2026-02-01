@@ -22,30 +22,34 @@ export default function Login() {
       return;
     }
 
-    dispatch(setUser(data.user));
-    navigate("/blogs"); 
+    if(data.user){
+      dispatch(setUser(data.user));
+      navigate("/blogs"); 
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Login</h2>
-      <label>Email: </label>
-      <input
-        aria-label="" 
-        value={email}
-        onChange={e => setEmail(e.target.value)} 
-        required/>
+    <div className="container" style={{ maxWidth: "360px", marginTop: "4rem" }}>
+      <form onSubmit={handleSubmit}>
+        <h2>Login</h2>
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={e => setEmail(e.currentTarget.value)} 
+          required
+        />
 
-      <label>Password: </label>
-      <input
-        type="password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        required
-      />
+        <input
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={e => setPassword(e.currentTarget.value)}
+          required
+        />
 
-      {error && <p>{error}</p>}
-      <button>Login</button>
-    </form>
+        {error && <p>{error}</p>}
+        <button className="primary-btn">Login</button>
+      </form>
+    </div>
   );
 }

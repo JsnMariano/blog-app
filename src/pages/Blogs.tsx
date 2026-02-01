@@ -2,35 +2,30 @@ import { useEffect, useState, type SyntheticEvent } from "react";
 import { supabase } from "../libs/supabase";
 import { Link } from "react-router-dom";
 
-interface Blog {
-  id: string;
-  title: string;
-}
-
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 6;
+const DEFAULT_IMAGE = "/default-blog.jpg";
 
 export default function Blogs() {
 
-
-  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [blogs, setBlogs] = useState<any[]>([]);
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   
   useEffect(() => {
+
     async function fetchBlogs() {
       const from = (page - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
-      const {data, count, error} = await supabase
+    supabase
       .from("blogs")
-      .select("id, title", {count : "exact"})
+      .select("*", {count : "exact"})
       .range(from, to)
-      .order("created_at", {ascending: false});
-
-      if(!error && data){
-        setBlogs(data);
+      .order("created_at", {ascending: false})
+      .then(({data, count}) =>{
+        setBlogs(data ?? []);
         setTotal(count ?? 0);
-      }
+      });
     }
     fetchBlogs();
   },[page]);
@@ -48,29 +43,45 @@ export default function Blogs() {
   }
 
   return (
-    <div>
-      <h2>Blogs</h2>
+    <div className="container">
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <h2>Blogs</h2>
+        <Link to="/blogs/create">Create Blog</Link>
+      </div>
 
-      <Link to="/blogs/create">Create Blog</Link>
+      {blogs.length === 0 ? (
+        <p className="empty-state">No posts yet. Be the first!</p>
+      ) : (
+        <div className="blog-grid">
+          {blogs.map(blog => (
+            <Link to={`/blogs/${blog.id}`} key={blog.id} className="blog-card">
+              <img src={blog.image_url || DEFAULT_IMAGE} alt={blog.title} />
+              <div className="blog-card-body">
+                <h3>{blog.title}</h3>
+                <p className="meta">
+                  {blog.author_email} · {new Date(blog.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
 
-      <ul>
-        {blogs.map(blog => (
-          <li key={blog.id}>
-            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-          </li>
-        ))}
-      </ul>
-
-      <div>
-        <button onClick={handlePrev} disabled={page === 1}>
+      <div style={{marginTop: "1 rem"}}>
+        <button
+          className="small-btn"
+          onClick={handlePrev} 
+          disabled={page === 1}>
           Previous
         </button>
 
-        <span>
-          Page {page} of {totalPages || 1}
-        </span>
+        <span className="meta">
+          Page {page} of {totalPages || 1} </span>
 
-        <button onClick={handleNext} disabled={page === totalPages}>
+        <button
+          className="small-btn"
+          onClick={handleNext}
+          disabled={page === totalPages}>
           Next
         </button>
       </div>
