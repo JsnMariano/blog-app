@@ -52,6 +52,13 @@ a {
   margin: auto;
   padding: 1rem;
 }
+.empty-state {
+  font-style: italic;
+  color: #666;
+  margin: 1rem 0;
+  text-align: center;
+}
+
 
 /* ---------- BUTTONS ---------- */
 

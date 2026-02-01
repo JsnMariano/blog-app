@@ -46,7 +46,7 @@ export default function Blogs() {
     <div className="container">
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <h2>Blogs</h2>
-        <Link to="/blogs/create">Create Blog</Link>
+        <Link to="/blogs/create" className="primary-btn">Create Blog</Link>
       </div>
 
       {blogs.length === 0 ? (

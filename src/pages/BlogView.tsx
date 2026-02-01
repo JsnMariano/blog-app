@@ -79,7 +79,7 @@ export default function BlogView() {
     setImage(null);
   }
 
-  if (!blog) return <p>Loading...</p>;
+  if (!blog) return <p className="empty-state">Loading...</p>;
 
   const isOwner = blog.user_id === userId;
   const totalPages = Math.ceil(total / COMMENT_PAGE_SIZE);
