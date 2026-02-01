@@ -20,14 +20,13 @@ export default function Register() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="container" style={{ maxWidth: "360px", marginTop: "4rem" }} onSubmit={handleSubmit}>
       <h2>Register</h2>
-      <label>Email</label>
-      <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-      <label>Password</label>
-      <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+      <input placeholder="Email" type="email" value={email} onChange={e => setEmail(e.currentTarget.value)} required />
+      <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.currentTarget.value)} required />
       {message && <p>{message}</p>}
-      <button type="submit">Register</button>
+      <button className="primary-btn" type="submit">Register</button>
+      <p style={{textAlign: "center"}}>or <a style={{textDecoration: "underlined", color:"blue"}} href="/login">Click here to login</a></p>
     </form>
   );
 }
