@@ -74,7 +74,16 @@ export default function BlogView() {
       author_email: user.data.user?.email,
     }).select().single();
 
-    if (data) setComments(prev => [...prev, data]);
+    if (data) {setComments(prev => [...prev, data]);
+      setTotal(prev => prev + 1);
+
+      const newTotal = total + 1;
+      const newLastPage = Math.max(
+        1,
+        Math.ceil(newTotal / COMMENT_PAGE_SIZE)
+      );
+      setPage(newLastPage);
+    }
     setText("");
     setImage(null);
   }
@@ -82,11 +91,11 @@ export default function BlogView() {
   if (!blog) return <p className="empty-state">Loading...</p>;
 
   const isOwner = blog.user_id === userId;
-  const totalPages = Math.ceil(total / COMMENT_PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(total / COMMENT_PAGE_SIZE));
 
   function handlePrev(e: SyntheticEvent){
     e.preventDefault();
-    setPage(prev => Math.max(prev - 1, 1))
+    setPage(prev => Math.max(prev - 1, 1));
   }
 
   function handleNext(e: SyntheticEvent){

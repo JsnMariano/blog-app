@@ -59,7 +59,6 @@ export default function CreateBlog() {
         required
       />
 
-      {/* Editor */}
       <textarea
         placeholder="Content"
         value={content}

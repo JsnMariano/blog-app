@@ -20,9 +20,12 @@ export default function Header() {
     }, []);
 
     async function logout() {
-    await supabase.auth.signOut();
-    dispatch(clearUser());
-    navigate("/login");
+        if (!window.confirm("Are you sure you want to logout?"))
+            return;
+
+        await supabase.auth.signOut();
+        dispatch(clearUser());
+        navigate("/login");
     }
 
     const onAuthPage = location.pathname === "/login" || location.pathname === "/register";

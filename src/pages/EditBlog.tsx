@@ -8,7 +8,9 @@ export default function EditBlog() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState<File | null>(null);
+  const [currentImage, setCurrentImage] = useState<string | null>(null);
+  const [newImage, setNewImage] = useState<File | null>(null);
+  const [removeImage, setRemoveImage] = useState(false);
 
   useEffect(() => {
     supabase.from("blogs").select("*").eq("id", id).single()
@@ -16,6 +18,7 @@ export default function EditBlog() {
         if (data) {
           setTitle(data.title);
           setContent(data.content);
+          setCurrentImage(data.image_url);
         }
       });
   }, [id]);
@@ -30,15 +33,24 @@ export default function EditBlog() {
 
     if (!window.confirm("Save changes to this blog post?")) return;
 
-    const image_url = image ? await uploadImage(image, "blog-images") : undefined;
+    let image_url: string | null | undefined = undefined;
 
-    await supabase.from("blogs").update({
-      title,
-      content,
-      ...(image_url && { image_url }),
-    }).eq("id", id);
+    if (removeImage) {
+      image_url = null;
+    } else if (newImage) {
+      image_url = await uploadImage(newImage, "blog-images");
+    }
 
-    navigate("/blogs");
+    await supabase
+      .from("blogs")
+      .update({
+        title,
+        content,
+        ...(image_url !== undefined && { image_url }),
+      })
+      .eq("id", id);
+
+    navigate(`/blogs/${id}`);
   }
 
   return (
@@ -55,7 +67,32 @@ export default function EditBlog() {
         required
       />
 
-      <input type="file" onChange={e => setImage(e.currentTarget.files?.[0] ?? null)} />
+      {currentImage && !removeImage && (
+        <div style={{ marginBottom: "0.75rem" }}>
+          <img src={currentImage} alt="Current blog" />
+        </div>
+      )}
+
+      {currentImage && (
+        <label style={{ fontSize: "0.9rem" }}>
+          <input
+            type="checkbox"
+            checked={removeImage}
+            onChange={e => setRemoveImage(e.target.checked)}
+          />{" "}
+          Remove current image
+        </label>
+      )}
+
+      {!removeImage && (
+        <input
+          type="file"
+          accept="image/*"
+          onChange={e =>
+            setNewImage(e.currentTarget.files?.[0] ?? null)
+          }
+        />
+      )}
 
       <button className="primary-btn">Save Changes</button>
     </form>
